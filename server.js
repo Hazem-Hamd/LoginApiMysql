@@ -34,6 +34,10 @@ async function connectDB() {
       waitForConnections: true,
       connectionLimit:    10,
       queueLimit:         0,
+      // Aiven requires SSL for all connections
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
 
     // Verify the connection works
