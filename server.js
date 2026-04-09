@@ -1,5 +1,5 @@
-// ============================================================
-//  The Architectural Sanctuary — Express + MySQL Backend
+﻿// ============================================================
+//  The Architectural Sanctuary ΓÇö Express + MySQL Backend
 // ============================================================
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
@@ -12,20 +12,20 @@ const cors = require('cors');
 
 const app = express();
 
-// ── Middleware ───────────────────────────────────────────────
+// ΓöÇΓöÇ Middleware ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// FIX: Serve static files from a dedicated 'public' folder to prevent exposing .env and server code.
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static HTML/CSS/JS files from the root folder
+app.use(express.static(path.join(__dirname)));
 
-// ── MySQL Connection Pool ────────────────────────────────────
+// ΓöÇΓöÇ MySQL Connection Pool ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 let db;
 
 async function connectDB() {
   try {
-    const dbConfig = {
+    db = await mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'root',
@@ -34,18 +34,15 @@ async function connectDB() {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-    };
-
-    // FIX: Only apply SSL if explicitly requested via environment variables
-    if (process.env.DB_SSL === 'true') {
-      dbConfig.ssl = { rejectUnauthorized: false };
-    }
-
-    db = await mysql.createPool(dbConfig);
+      // Aiven requires SSL for all connections
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
 
     // Verify the connection works
     await db.query('SELECT 1');
-    console.log('✅  Connected to MySQL database:', process.env.DB_NAME || 'sanctuary_db');
+    console.log('Γ£à  Connected to MySQL database:', process.env.DB_NAME || 'sanctuary_db');
 
     // Auto-create the users table if it doesn't exist
     await db.query(`
@@ -58,15 +55,15 @@ async function connectDB() {
         updated_at  DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-    console.log('✅  Users table ready.');
+    console.log('Γ£à  Users table ready.');
   } catch (err) {
-    console.error('❌  MySQL connection failed:', err.message);
-    console.error('   → Check your .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)');
+    console.error('Γ¥î  MySQL connection failed:', err.message);
+    console.error('   ΓåÆ Check your .env file (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)');
     process.exit(1);
   }
 }
 
-// ── JWT Helper ───────────────────────────────────────────────
+// ΓöÇΓöÇ JWT Helper ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const JWT_SECRET = process.env.JWT_SECRET || 'sanctuary_dev_secret';
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '7d';
 
@@ -74,7 +71,7 @@ function signToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 }
 
-// ── Auth Middleware ──────────────────────────────────────────
+// ΓöÇΓöÇ Auth Middleware ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function authRequired(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
@@ -89,24 +86,24 @@ function authRequired(req, res, next) {
   }
 }
 
-// ── Validation Helpers ───────────────────────────────────────
+// ΓöÇΓöÇ Validation Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// ── Routes ──────────────────────────────────────────────────
+// ΓöÇΓöÇ Routes ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 // Health check
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'Sanctuary API is running 🏛️' });
+  res.json({ success: true, message: 'Sanctuary API is running ≡ƒÅ¢∩╕Å' });
 });
 
-// ── POST /api/signup ─────────────────────────────────────────
+// ΓöÇΓöÇ POST /api/signup ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 app.post('/api/signup', async (req, res) => {
   try {
     const { full_name, email, password } = req.body;
 
-    // ── Validate inputs ──
+    // ΓöÇΓöÇ Validate inputs ΓöÇΓöÇ
     const errors = {};
     if (!full_name || full_name.trim().length < 2) {
       errors.full_name = 'Full name must be at least 2 characters.';
@@ -125,7 +122,7 @@ app.post('/api/signup', async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = full_name.trim();
 
-    // ── Check for duplicate email ──
+    // ΓöÇΓöÇ Check for duplicate email ΓöÇΓöÇ
     const [existing] = await db.query(
       'SELECT id FROM users WHERE email = ?',
       [cleanEmail]
@@ -137,7 +134,7 @@ app.post('/api/signup', async (req, res) => {
       });
     }
 
-    // ── Hash password & insert ──
+    // ΓöÇΓöÇ Hash password & insert ΓöÇΓöÇ
     const hash = await bcrypt.hash(password, 12);
     const [result] = await db.query(
       'INSERT INTO users (full_name, email, password) VALUES (?, ?, ?)',
@@ -147,7 +144,7 @@ app.post('/api/signup', async (req, res) => {
     const userId = result.insertId;
     const token = signToken({ id: userId, email: cleanEmail, full_name: cleanName });
 
-    console.log(`👤  New user signed up: ${cleanEmail} (id=${userId})`);
+    console.log(`≡ƒæñ  New user signed up: ${cleanEmail} (id=${userId})`);
 
     return res.status(201).json({
       success: true,
@@ -162,12 +159,12 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// ── POST /api/login ──────────────────────────────────────────
+// ΓöÇΓöÇ POST /api/login ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ── Validate inputs ──
+    // ΓöÇΓöÇ Validate inputs ΓöÇΓöÇ
     const errors = {};
     if (!email || !isValidEmail(email.trim())) {
       errors.email = 'Please provide a valid email address.';
@@ -182,36 +179,35 @@ app.post('/api/login', async (req, res) => {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // ── Look up user ──
+    // ΓöÇΓöÇ Look up user ΓöÇΓöÇ
     const [rows] = await db.query(
       'SELECT id, full_name, email, password FROM users WHERE email = ?',
       [cleanEmail]
     );
 
-    const genericErrorMsg = 'Invalid email or password.';
-
     if (rows.length === 0) {
+      // Generic message ΓÇö don't reveal whether email exists
       return res.status(401).json({
         success: false,
-        message: genericErrorMsg
+        errors: { email: 'Invalid email or password.' },
       });
     }
 
     const user = rows[0];
 
-    // ── Verify password ──
+    // ΓöÇΓöÇ Verify password ΓöÇΓöÇ
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        message: genericErrorMsg
+        errors: { password: 'Invalid email or password.' },
       });
     }
 
-    // ── Issue token ──
+    // ΓöÇΓöÇ Issue token ΓöÇΓöÇ
     const token = signToken({ id: user.id, email: user.email, full_name: user.full_name });
 
-    console.log(`🔐  User logged in: ${user.email} (id=${user.id})`);
+    console.log(`≡ƒöÉ  User logged in: ${user.email} (id=${user.id})`);
 
     return res.status(200).json({
       success: true,
@@ -226,11 +222,63 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ── GET /api/me ───────────────────────────────────────────────
+// ΓöÇΓöÇ GET /api/me ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// Protected route ΓÇö returns current user's info
 app.get('/api/me', authRequired, async (req, res) => {
   try {
     const [rows] = await db.query(
       'SELECT id, full_name, email, created_at FROM users WHERE id = ?',
       [req.user.id]
     );
-    if (rows.length === 0
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+    return res.json({ success: true, user: rows[0] });
+  } catch (err) {
+    console.error('Me error:', err);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// ΓöÇΓöÇ GET /api/users ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// Admin view ΓÇö list all registered users (for dev/testing)
+app.get('/api/users', authRequired, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT id, full_name, email, created_at FROM users ORDER BY created_at DESC'
+    );
+    return res.json({ success: true, count: rows.length, users: rows });
+  } catch (err) {
+    console.error('Users list error:', err);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// ΓöÇΓöÇ Catch-all: serve index.html for client-side routing ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ΓöÇΓöÇ Start ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+const PORT = process.env.PORT || 3000;
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log('');
+    console.log('≡ƒÅ¢∩╕Å  The Architectural Sanctuary');
+    console.log(`≡ƒÜÇ  Server running at http://localhost:${PORT}`);
+    console.log('');
+    console.log('   Pages:');
+    console.log(`   ΓÇó Login    ΓåÆ http://localhost:${PORT}/login.html`);
+    console.log(`   ΓÇó Sign Up  ΓåÆ http://localhost:${PORT}/signup.html`);
+    console.log(`   ΓÇó DashboardΓåÆ http://localhost:${PORT}/dashboard.html`);
+    console.log('');
+    console.log('   API Endpoints:');
+    console.log(`   ΓÇó POST /api/signup`);
+    console.log(`   ΓÇó POST /api/login`);
+    console.log(`   ΓÇó GET  /api/me  (requires Bearer token)`);
+    console.log(`   ΓÇó GET  /api/users (requires Bearer token)`);
+    console.log(`   ΓÇó GET  /api/health`);
+    console.log('');
+  });
+});
