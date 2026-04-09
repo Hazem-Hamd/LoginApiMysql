@@ -1,0 +1,36 @@
+﻿
+============================================
+ SANCTUARY API - FULL TEST SUITE
+============================================
+
+1. Health Check
+  [PASS] GET /api/health (HTTP 200)
+     message: Sanctuary API is running 🏛️
+
+2. Sign Up
+  [PASS] POST /api/signup (valid new user) (HTTP 201)
+  [PASS] POST /api/signup (duplicate email -> 409) (HTTP 409 -- expected error)
+  [PASS] POST /api/signup (invalid inputs -> 422) (HTTP 422 -- expected error)
+
+3. Login
+  [PASS] POST /api/login (valid credentials) (HTTP 200)
+  [PASS] POST /api/login (wrong password -> 401) (HTTP 401 -- expected error)
+  [PASS] POST /api/login (unknown email -> 401) (HTTP 401 -- expected error)
+  [PASS] POST /api/login (empty body -> 422) (HTTP 422 -- expected error)
+
+4. Protected Routes (authenticated)
+  [PASS] GET /api/me (valid token) (HTTP 200)
+     user: Test User 200739 <testuser_200739@sanctuary.test>
+  [PASS] GET /api/users (valid token) (HTTP 200)
+     total users in DB: 4
+
+5. Protected Routes (unauthorized)
+  [PASS] GET /api/me (no token -> 401) (HTTP 401 -- expected error)
+  [PASS] GET /api/users (no token -> 401) (HTTP 401 -- expected error)
+  [PASS] GET /api/me (bad token -> 401) (HTTP 401 -- expected error)
+  [PASS] GET /api/users (bad token -> 401) (HTTP 401 -- expected error)
+
+============================================
+  Results: 14 passed, 0 failed
+============================================
+

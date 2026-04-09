@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Sign Up | The Architectural Sanctuary</title>
+  <meta name="description" content="Create your account on The Architectural Sanctuary — a prestigious, security-first professional workspace."/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-container": "#8392ea",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#1b1b21",
+            "surface-container-low": "#f5f2fb",
+            "on-surface": "#1b1b21",
+            "secondary-container": "#b78efe",
+            "outline": "#767683",
+            "surface-container": "#efecf5",
+            "tertiary": "#00105a",
+            "secondary-fixed-dim": "#d4bbff",
+            "background": "#fbf8ff",
+            "primary-container": "#142283",
+            "inverse-surface": "#303036",
+            "surface-tint": "#4955b3",
+            "error-container": "#ffdad6",
+            "surface": "#fbf8ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed-variant": "#2f3f92",
+            "on-error": "#ffffff",
+            "on-surface-variant": "#454652",
+            "on-error-container": "#93000a",
+            "tertiary-container": "#14267a",
+            "surface-variant": "#e4e1ea",
+            "outline-variant": "#c6c5d4",
+            "on-primary-container": "#8390f2",
+            "surface-container-high": "#eae7ef",
+            "on-secondary-fixed": "#260058",
+            "on-primary-fixed-variant": "#303c9a",
+            "primary-fixed-dim": "#bcc2ff",
+            "inverse-on-surface": "#f2eff8",
+            "tertiary-fixed": "#dee0ff",
+            "surface-bright": "#fbf8ff",
+            "error": "#ba1a1a",
+            "primary-fixed": "#dfe0ff",
+            "secondary": "#6f48b2",
+            "surface-container-highest": "#e4e1ea",
+            "surface-dim": "#dbd9e1",
+            "secondary-fixed": "#ebdcff",
+            "on-secondary-fixed-variant": "#572e99",
+            "on-primary-fixed": "#000c62",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed": "#00105b",
+            "inverse-primary": "#bcc2ff",
+            "primary": "#000b60",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#491d8a",
+            "tertiary-fixed-dim": "#bac3ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline": ["Manrope", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .ambient-shadow { box-shadow: 0px 12px 32px -4px rgba(27, 27, 33, 0.06); }
+    .primary-gradient { background: linear-gradient(135deg, #000b60 0%, #142283 100%); }
+    .primary-gradient:hover { background: linear-gradient(135deg, #000e80 0%, #1a2ea0 100%); }
+
+    /* Animations */
+    body { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .auth-card { animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Input focus */
+    input:focus { outline: none; box-shadow: 0 0 0 3px rgba(73, 85, 179, 0.15); }
+
+    /* Submit button */
+    .submit-btn { transition: all 0.2s ease; }
+    .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 11, 96, 0.3); }
+    .submit-btn:active { transform: scale(0.98) translateY(0); }
+
+    /* Password strength bar */
+    .strength-bar {
+      height: 3px;
+      border-radius: 9999px;
+      transition: width 0.3s ease, background-color 0.3s ease;
+      width: 0%;
+    }
+
+    /* Error state */
+    .input-error { box-shadow: 0 0 0 2px rgba(186, 26, 26, 0.4) !important; background-color: #fff8f8 !important; }
+    .input-ok { box-shadow: 0 0 0 2px rgba(0, 11, 96, 0.2) !important; }
+    .error-msg { color: #ba1a1a; font-size: 0.7rem; margin-top: 0.25rem; padding-left: 0.25rem; font-family: 'Inter', sans-serif; display: none; }
+    .error-msg.visible { display: block; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1b1b21;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Blob animations */
+    .blob { animation: blobFloat 8s ease-in-out infinite alternate; }
+    .blob-2 { animation: blobFloat2 10s ease-in-out infinite alternate; }
+    @keyframes blobFloat { from { transform: translate(0,0) scale(1); } to { transform: translate(20px, -20px) scale(1.05); } }
+    @keyframes blobFloat2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-15px, 15px) scale(1.03); } }
+
+    /* Check icon for matching passwords */
+    .icon-ok { color: #000b60; }
+    .icon-error { color: #ba1a1a; }
+  </style>
+</head>
+<body class="bg-surface-container-low font-body text-on-surface min-h-screen flex flex-col">
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Header -->
+  <header class="w-full top-0 z-50 bg-surface/80 backdrop-blur-sm">
+    <nav class="flex justify-between items-center px-8 py-5 max-w-7xl mx-auto w-full font-headline text-sm tracking-wide">
+      <a href="index.html" class="text-2xl font-bold tracking-tight text-primary hover:opacity-80 transition-opacity" id="brand-logo">
+        The Architectural Sanctuary
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#" id="nav-help">Help</a>
+        <a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#" id="nav-privacy">Privacy</a>
+        <a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#" id="nav-terms">Terms</a>
+        <a href="login.html" id="nav-login-btn" class="border border-primary text-primary px-6 py-2 rounded-lg font-bold hover:bg-primary hover:text-on-primary transition-all text-sm tracking-wide inline-block">Sign In</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow flex items-center justify-center px-6 py-12 relative overflow-hidden">
+    <!-- Blobs -->
+    <div class="blob absolute top-[-10%] left-[-5%] w-[40%] h-[60%] bg-secondary-fixed-dim opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="blob-2 absolute bottom-[-10%] right-[-5%] w-[35%] h-[50%] bg-on-tertiary-container opacity-15 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <div class="auth-card max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 bg-surface-container-lowest rounded-xl ambient-shadow overflow-hidden z-10">
+
+      <!-- Left: Editorial Content -->
+      <div class="hidden lg:flex flex-col justify-between p-12 bg-surface-container-high relative overflow-hidden">
+        <div class="relative z-10">
+          <span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">Institutional Excellence</span>
+          <h1 class="font-headline text-4xl font-extrabold text-primary leading-tight mb-6">
+            Create your place in the <span class="text-secondary">Sanctuary.</span>
+          </h1>
+          <p class="text-on-surface-variant text-base leading-relaxed max-w-sm">
+            Join a community where precision meets peace. Experience the architectural standard of digital security.
+          </p>
+        </div>
+
+        <div class="relative z-10 space-y-4">
+          <div class="flex items-center gap-4 bg-surface-container-lowest rounded-lg px-4 py-3 ambient-shadow">
+            <span class="material-symbols-outlined text-primary text-[22px]">verified_user</span>
+            <div>
+              <p class="font-semibold text-on-surface text-sm">Enterprise-grade encryption</p>
+              <p class="text-on-surface-variant text-xs">AES-256 at rest & in transit</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 bg-surface-container-lowest rounded-lg px-4 py-3 ambient-shadow">
+            <span class="material-symbols-outlined text-primary text-[22px]">speed</span>
+            <div>
+              <p class="font-semibold text-on-surface text-sm">Sub-millisecond verification</p>
+              <p class="text-on-surface-variant text-xs">99.99% uptime guaranteed</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 bg-surface-container-lowest rounded-lg px-4 py-3 ambient-shadow">
+            <span class="material-symbols-outlined text-primary text-[22px]">groups</span>
+            <div>
+              <p class="font-semibold text-on-surface text-sm">2,000+ architects</p>
+              <p class="text-on-surface-variant text-xs">Join the growing community</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subtle decorative overlay -->
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden">
+          <svg width="100%" height="100%" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000b60" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="p-8 md:p-12 lg:p-14 flex flex-col justify-center">
+        <div class="mb-8 text-center lg:text-left">
+          <h2 class="font-headline text-3xl font-bold text-on-background mb-2 tracking-tight">Sign Up</h2>
+          <p class="text-on-surface-variant text-sm">Fill in your details to create an account</p>
+        </div>
+
+        <form id="signup-form" class="space-y-5" novalidate>
+
+          <!-- Full Name -->
+          <div class="space-y-1.5">
+            <label class="block font-label text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="fullname">Full Name</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-surface-tint transition-colors text-[20px]">person</span>
+              <input
+                id="fullname" name="fullname" type="text" autocomplete="name"
+                class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-4 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest transition-all text-sm"
+                placeholder="Julian Architecture"
+              />
+            </div>
+            <p class="error-msg" id="fullname-error">Please enter your full name.</p>
+          </div>
+
+          <!-- Email -->
+          <div class="space-y-1.5">
+            <label class="block font-label text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="email">Email Address</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-surface-tint transition-colors text-[20px]">alternate_email</span>
+              <input
+                id="email" name="email" type="email" autocomplete="email"
+                class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-4 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest transition-all text-sm"
+                placeholder="name@sanctuary.com"
+              />
+            </div>
+            <p class="error-msg" id="email-error">Please enter a valid email address.</p>
+          </div>
+
+          <!-- Password -->
+          <div class="space-y-1.5">
+            <label class="block font-label text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="password">Password</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-surface-tint transition-colors text-[20px]">lock</span>
+              <input
+                id="password" name="password" type="password" autocomplete="new-password"
+                class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-12 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest transition-all text-sm"
+                placeholder="••••••••"
+              />
+              <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline-variant hover:text-on-surface transition-colors" aria-label="Toggle password">
+                <span class="material-symbols-outlined text-[20px]" id="toggle-icon">visibility</span>
+              </button>
+            </div>
+            <!-- Strength bar -->
+            <div class="bg-outline-variant/20 rounded-full h-[3px] mt-2">
+              <div class="strength-bar rounded-full" id="strength-bar"></div>
+            </div>
+            <p class="text-[10px] text-on-surface-variant font-label mt-1" id="strength-label"></p>
+            <p class="error-msg" id="password-error">Password must be at least 8 characters.</p>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="space-y-1.5">
+            <label class="block font-label text-xs uppercase tracking-wider text-on-surface-variant font-semibold" for="confirm-password">Confirm Password</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-surface-tint transition-colors text-[20px]" id="shield-icon">shield_lock</span>
+              <input
+                id="confirm-password" name="confirm-password" type="password" autocomplete="new-password"
+                class="w-full bg-surface-container-highest border-none rounded-lg py-3.5 pl-12 pr-12 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest transition-all text-sm"
+                placeholder="••••••••"
+              />
+              <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[20px] hidden transition-all" id="match-icon"></span>
+            </div>
+            <p class="error-msg" id="confirm-error">Passwords do not match.</p>
+          </div>
+
+          <!-- Terms checkbox -->
+          <div class="flex items-start gap-3 px-1">
+            <input id="terms" name="terms" type="checkbox" class="w-4 h-4 accent-primary mt-0.5 cursor-pointer flex-shrink-0"/>
+            <label for="terms" class="text-xs text-on-surface-variant font-label cursor-pointer leading-relaxed">
+              I agree to the <a href="#" class="text-primary font-semibold hover:underline underline-offset-2">Terms of Service</a> and <a href="#" class="text-primary font-semibold hover:underline underline-offset-2">Privacy Policy</a>
+            </label>
+          </div>
+          <p class="error-msg" id="terms-error">You must agree to the terms to continue.</p>
+
+          <!-- Submit -->
+          <button
+            class="submit-btn w-full primary-gradient text-on-primary py-4 rounded-lg font-headline font-bold tracking-[0.05em] text-sm mt-1"
+            type="submit"
+            id="signup-submit"
+          >
+            CREATE MY ACCOUNT
+          </button>
+        </form>
+
+        <!-- Login link & divider -->
+        <div class="mt-8 flex flex-col items-center space-y-4">
+          <p class="text-on-surface-variant text-sm">
+            Already have an account?
+            <a class="text-primary font-bold hover:text-secondary transition-colors underline-offset-4 hover:underline ml-1" href="login.html" id="login-link">Sign In</a>
+          </p>
+          <div class="flex items-center w-full gap-4">
+            <div class="h-px bg-outline-variant/30 flex-grow"></div>
+            <span class="text-[10px] uppercase tracking-widest text-outline font-label">Secure Gateway</span>
+            <div class="h-px bg-outline-variant/30 flex-grow"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-surface">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 py-7 w-full max-w-7xl mx-auto font-label text-xs uppercase tracking-widest">
+      <div class="text-sm font-semibold text-primary mb-4 md:mb-0 font-headline">Architectural Sanctuary</div>
+      <div class="font-label text-[10px] uppercase tracking-widest text-outline">© 2024 Architectural Sanctuary. All rights reserved.</div>
+      <div class="flex gap-8 mt-4 md:mt-0 text-outline">
+        <a class="hover:text-secondary transition-colors hover:underline underline-offset-4" href="#" id="footer-support">Support</a>
+        <a class="hover:text-secondary transition-colors hover:underline underline-offset-4" href="#" id="footer-security">Security</a>
+        <a class="hover:text-secondary transition-colors hover:underline underline-offset-4" href="#" id="footer-contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // — Toast —
+    function showToast(msg, duration = 3000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    // — Password toggle —
+    const toggleBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggle-icon');
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+      toggleIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+    });
+
+    // — Password strength —
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+    function getStrength(pw) {
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      return score;
+    }
+    passwordInput.addEventListener('input', () => {
+      const pw = passwordInput.value;
+      const score = getStrength(pw);
+      const configs = [
+        { w: '0%',   c: 'transparent', label: '' },
+        { w: '20%',  c: '#ba1a1a',     label: 'Very weak' },
+        { w: '40%',  c: '#e85e1a',     label: 'Weak' },
+        { w: '60%',  c: '#e8b21a',     label: 'Fair' },
+        { w: '80%',  c: '#4955b3',     label: 'Strong' },
+        { w: '100%', c: '#000b60',     label: 'Very strong' },
+      ];
+      const cfg = configs[pw.length === 0 ? 0 : Math.min(score, 5)];
+      strengthBar.style.width = pw.length === 0 ? '0%' : cfg.w;
+      strengthBar.style.backgroundColor = cfg.c;
+      strengthLabel.textContent = pw.length === 0 ? '' : cfg.label;
+      strengthLabel.style.color = cfg.c;
+    });
+
+    // — Confirm password match indicator —
+    const confirmInput = document.getElementById('confirm-password');
+    const matchIcon = document.getElementById('match-icon');
+    confirmInput.addEventListener('input', () => {
+      if (confirmInput.value.length === 0) {
+        matchIcon.classList.add('hidden');
+        return;
+      }
+      matchIcon.classList.remove('hidden');
+      if (confirmInput.value === passwordInput.value) {
+        matchIcon.textContent = 'check_circle';
+        matchIcon.className = 'material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[20px] icon-ok transition-all';
+      } else {
+        matchIcon.textContent = 'cancel';
+        matchIcon.className = 'material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[20px] icon-error transition-all';
+      }
+    });
+
+    // — Validation helpers —
+    function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function showError(inputEl, errorEl) {
+      inputEl.classList.add('input-error');
+      document.getElementById(errorEl).classList.add('visible');
+    }
+    function clearError(inputEl, errorEl) {
+      inputEl.classList.remove('input-error');
+      document.getElementById(errorEl).classList.remove('visible');
+    }
+
+    // Auto-clear errors on input
+    document.getElementById('fullname').addEventListener('input', () => clearError(document.getElementById('fullname'), 'fullname-error'));
+    document.getElementById('email').addEventListener('input', () => clearError(document.getElementById('email'), 'email-error'));
+    passwordInput.addEventListener('input', () => clearError(passwordInput, 'password-error'));
+    confirmInput.addEventListener('input', () => clearError(confirmInput, 'confirm-error'));
+
+    // — Form submit → POST /api/signup —
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let valid = true;
+
+      const nameEl  = document.getElementById('fullname');
+      const emailEl = document.getElementById('email');
+      const terms   = document.getElementById('terms');
+      const termsError = document.getElementById('terms-error');
+
+      // Client-side validation
+      if (nameEl.value.trim().length < 2)   { showError(nameEl, 'fullname-error'); valid = false; } else clearError(nameEl, 'fullname-error');
+      if (!validateEmail(emailEl.value.trim())) { showError(emailEl, 'email-error'); valid = false; } else clearError(emailEl, 'email-error');
+      if (passwordInput.value.length < 8)   { showError(passwordInput, 'password-error'); valid = false; } else clearError(passwordInput, 'password-error');
+      if (confirmInput.value !== passwordInput.value || !confirmInput.value) { showError(confirmInput, 'confirm-error'); valid = false; } else clearError(confirmInput, 'confirm-error');
+      if (!terms.checked) { termsError.classList.add('visible'); valid = false; } else termsError.classList.remove('visible');
+
+      if (!valid) return;
+
+      const btn = document.getElementById('signup-submit');
+      btn.textContent = 'CREATING ACCOUNT…';
+      btn.disabled = true;
+      btn.style.opacity = '0.75';
+
+      try {
+        const res  = await fetch('/api/signup', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            full_name: nameEl.value.trim(),
+            email:     emailEl.value.trim().toLowerCase(),
+            password:  passwordInput.value,
+          }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('sanctuary_token', data.token);
+          localStorage.setItem('sanctuary_user',  JSON.stringify(data.user));
+          showToast('🎉 Account created! Redirecting…', 2500);
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1800);
+        } else {
+          if (data.errors) {
+            if (data.errors.full_name) { document.getElementById('fullname-error').textContent = data.errors.full_name; showError(nameEl, 'fullname-error'); }
+            if (data.errors.email)     { document.getElementById('email-error').textContent = data.errors.email;       showError(emailEl, 'email-error'); }
+            if (data.errors.password)  { document.getElementById('password-error').textContent = data.errors.password; showError(passwordInput, 'password-error'); }
+          } else {
+            showToast('❌ ' + (data.message || 'Sign up failed. Try again.'));
+          }
+          btn.textContent = 'CREATE MY ACCOUNT';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      } catch (err) {
+        showToast('❌ Network error — is the server running? (node server.js)');
+        btn.textContent = 'CREATE MY ACCOUNT';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    });
+  </script>
+</body>
+</html>

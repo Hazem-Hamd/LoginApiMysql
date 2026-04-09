@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Dashboard | The Architectural Sanctuary</title>
+  <meta name="description" content="Your secure dashboard on The Architectural Sanctuary."/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-container": "#8392ea",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#1b1b21",
+            "surface-container-low": "#f5f2fb",
+            "on-surface": "#1b1b21",
+            "outline": "#767683",
+            "surface-container": "#efecf5",
+            "secondary-fixed-dim": "#d4bbff",
+            "background": "#fbf8ff",
+            "primary-container": "#142283",
+            "surface-tint": "#4955b3",
+            "surface": "#fbf8ff",
+            "on-surface-variant": "#454652",
+            "surface-container-high": "#eae7ef",
+            "outline-variant": "#c6c5d4",
+            "on-primary-container": "#8390f2",
+            "error": "#ba1a1a",
+            "secondary": "#6f48b2",
+            "surface-container-highest": "#e4e1ea",
+            "primary": "#000b60",
+            "on-primary": "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Manrope", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+      user-select: none;
+    }
+    body { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ambient-shadow { box-shadow: 0px 12px 32px -4px rgba(27, 27, 33, 0.06); }
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -4px rgba(27,27,33,0.1); }
+
+    .btn-gradient { background: linear-gradient(135deg, #000b60 0%, #142283 100%); }
+    .btn-gradient:hover { background: linear-gradient(135deg, #000e80 0%, #1a2ea0 100%); }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #efecf5 25%, #e4e1ea 50%, #efecf5 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 0.5rem;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1b1b21;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Avatar initials */
+    .avatar {
+      background: linear-gradient(135deg, #000b60, #6f48b2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.05em;
+    }
+
+    /* Blob */
+    .blob { animation: blobFloat 8s ease-in-out infinite alternate; }
+    @keyframes blobFloat { from { transform: translate(0,0) scale(1); } to { transform: translate(20px,-20px) scale(1.05); } }
+  </style>
+</head>
+<body class="bg-surface-container-low font-body text-on-surface min-h-screen flex flex-col">
+  <div class="toast" id="toast"></div>
+
+  <!-- Decorative blob -->
+  <div class="blob fixed top-[-10%] right-[-5%] w-96 h-96 rounded-full bg-secondary-fixed-dim opacity-10 blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- Header / Nav -->
+  <header class="bg-surface/90 backdrop-blur-sm sticky top-0 z-50 ambient-shadow">
+    <nav class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+      <a href="index.html" class="text-xl font-bold tracking-tight text-primary font-headline hover:opacity-80 transition-opacity" id="brand-logo">
+        The Architectural Sanctuary
+      </a>
+      <div class="flex items-center gap-4">
+        <!-- User pill -->
+        <div class="hidden md:flex items-center gap-3 bg-surface-container-low rounded-full px-4 py-2">
+          <div class="avatar w-8 h-8 rounded-full text-xs" id="nav-avatar">?</div>
+          <span class="text-sm font-semibold text-on-surface" id="nav-name">Loading…</span>
+        </div>
+        <button
+          id="logout-btn"
+          class="flex items-center gap-2 text-sm font-label text-on-surface-variant hover:text-error transition-colors px-3 py-2 rounded-lg hover:bg-surface-container"
+        >
+          <span class="material-symbols-outlined text-[18px]">logout</span>
+          <span class="hidden sm:inline">Sign Out</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-10">
+
+    <!-- Welcome Banner -->
+    <div class="mb-8 bg-surface-container-lowest rounded-xl ambient-shadow p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden relative">
+      <div class="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <svg width="100%" height="100%" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000b60" stroke-width="1"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#g)"/>
+        </svg>
+      </div>
+      <div class="relative z-10">
+        <p class="font-label text-xs uppercase tracking-widest text-secondary mb-1">Welcome back</p>
+        <h1 class="font-headline text-3xl font-extrabold text-primary tracking-tight" id="welcome-name">
+          <span class="skeleton inline-block w-48 h-8">&nbsp;</span>
+        </h1>
+        <p class="text-on-surface-variant text-sm mt-2" id="welcome-email">
+          <span class="skeleton inline-block w-56 h-4">&nbsp;</span>
+        </p>
+      </div>
+      <div class="relative z-10">
+        <div class="avatar w-20 h-20 rounded-2xl text-2xl font-headline" id="welcome-avatar">?</div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="card-hover bg-surface-container-lowest rounded-xl ambient-shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant">Account Status</p>
+          <span class="material-symbols-outlined text-[20px] text-primary">verified_user</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-primary">Active</p>
+        <p class="text-xs text-on-surface-variant mt-1">Fully authenticated</p>
+      </div>
+      <div class="card-hover bg-surface-container-lowest rounded-xl ambient-shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant">Member Since</p>
+          <span class="material-symbols-outlined text-[20px] text-secondary">calendar_month</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-primary" id="member-since">
+          <span class="skeleton inline-block w-24 h-7">&nbsp;</span>
+        </p>
+        <p class="text-xs text-on-surface-variant mt-1">Registration date</p>
+      </div>
+      <div class="card-hover bg-surface-container-lowest rounded-xl ambient-shadow p-6">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant">Security</p>
+          <span class="material-symbols-outlined text-[20px] text-primary">lock</span>
+        </div>
+        <p class="font-headline text-2xl font-bold text-primary">AES-256</p>
+        <p class="text-xs text-on-surface-variant mt-1">Password encrypted</p>
+      </div>
+    </div>
+
+    <!-- Account Details Card -->
+    <div class="bg-surface-container-lowest rounded-xl ambient-shadow p-8 mb-8">
+      <h2 class="font-headline text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">manage_accounts</span>
+        Account Details
+      </h2>
+      <div class="space-y-0">
+        <div class="flex flex-col sm:flex-row sm:items-center py-4 border-b border-surface-container-high last:border-none">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant w-40 flex-shrink-0 mb-1 sm:mb-0">Full Name</p>
+          <p class="text-on-surface font-semibold" id="detail-name">
+            <span class="skeleton inline-block w-40 h-5">&nbsp;</span>
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center py-4 border-b border-surface-container-high last:border-none">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant w-40 flex-shrink-0 mb-1 sm:mb-0">Email Address</p>
+          <p class="text-on-surface font-semibold" id="detail-email">
+            <span class="skeleton inline-block w-52 h-5">&nbsp;</span>
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center py-4 border-b border-surface-container-high last:border-none">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant w-40 flex-shrink-0 mb-1 sm:mb-0">User ID</p>
+          <p class="text-on-surface font-semibold font-label" id="detail-id">
+            <span class="skeleton inline-block w-20 h-5">&nbsp;</span>
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center py-4">
+          <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant w-40 flex-shrink-0 mb-1 sm:mb-0">Password</p>
+          <div class="flex items-center gap-2">
+            <span class="text-on-surface font-semibold tracking-[0.3em]">••••••••••••</span>
+            <span class="text-xs text-secondary font-label ml-2">(bcrypt encrypted)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <a href="#" class="card-hover bg-primary-container rounded-xl p-6 flex items-center gap-4 group">
+        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-primary-container text-[24px]">settings</span>
+        </div>
+        <div>
+          <p class="font-headline font-bold text-white">Account Settings</p>
+          <p class="text-on-primary-container text-sm opacity-80">Manage your profile</p>
+        </div>
+        <span class="material-symbols-outlined text-on-primary-container ml-auto opacity-60 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </a>
+      <a href="#" class="card-hover bg-surface-container-lowest rounded-xl ambient-shadow p-6 flex items-center gap-4 group">
+        <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary text-[24px]">shield</span>
+        </div>
+        <div>
+          <p class="font-headline font-bold text-on-surface">Security Center</p>
+          <p class="text-on-surface-variant text-sm">Review security settings</p>
+        </div>
+        <span class="material-symbols-outlined text-on-surface-variant ml-auto opacity-40 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-surface-container-high bg-surface mt-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center px-8 py-5 max-w-7xl mx-auto font-label text-xs uppercase tracking-widest text-outline">
+      <span class="font-headline text-sm font-semibold text-primary mb-2 md:mb-0">Architectural Sanctuary</span>
+      <span>© 2024 Architectural Sanctuary. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    // — Toast —
+    function showToast(msg, duration = 3000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    // — Get initials from name —
+    function initials(name) {
+      return (name || '?')
+        .split(' ')
+        .slice(0, 2)
+        .map(w => w[0])
+        .join('')
+        .toUpperCase();
+    }
+
+    // — Format date —
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+
+    // — Populate UI with user data —
+    function populateUI(user) {
+      const init = initials(user.full_name);
+
+      document.getElementById('nav-avatar').textContent = init;
+      document.getElementById('nav-name').textContent = user.full_name;
+
+      document.getElementById('welcome-name').textContent  = 'Hello, ' + (user.full_name.split(' ')[0] || user.full_name) + ' 👋';
+      document.getElementById('welcome-email').textContent = user.email;
+      document.getElementById('welcome-avatar').textContent = init;
+
+      document.getElementById('member-since').textContent  = fmtDate(user.created_at);
+      document.getElementById('detail-name').textContent   = user.full_name;
+      document.getElementById('detail-email').textContent  = user.email;
+      document.getElementById('detail-id').textContent     = '#' + user.id;
+    }
+
+    // — Auth guard + load user —
+    async function init() {
+      const token = localStorage.getItem('sanctuary_token');
+
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Try loading from localStorage first for instant render
+      const cached = localStorage.getItem('sanctuary_user');
+      if (cached) {
+        try { populateUI(JSON.parse(cached)); } catch {}
+      }
+
+      // Then verify token with server and get fresh data
+      try {
+        const res  = await fetch('/api/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('sanctuary_user', JSON.stringify(data.user));
+          populateUI(data.user);
+        } else {
+          // Token invalid/expired
+          localStorage.removeItem('sanctuary_token');
+          localStorage.removeItem('sanctuary_user');
+          window.location.href = 'login.html';
+        }
+      } catch {
+        // Server unreachable — still show cached data if available
+        if (!cached) {
+          showToast('⚠️ Could not reach server. Showing cached data.');
+        }
+      }
+    }
+
+    // — Logout —
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('sanctuary_token');
+      localStorage.removeItem('sanctuary_user');
+      showToast('👋 Signed out. See you next time!');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+    });
+
+    // Boot
+    init();
+  </script>
+</body>
+</html>

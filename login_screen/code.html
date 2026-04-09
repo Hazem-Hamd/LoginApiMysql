@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#8392ea",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1b1b21",
+                    "surface-container-low": "#f5f2fb",
+                    "on-surface": "#1b1b21",
+                    "secondary-container": "#b78efe",
+                    "outline": "#767683",
+                    "surface-container": "#efecf5",
+                    "tertiary": "#00105a",
+                    "secondary-fixed-dim": "#d4bbff",
+                    "background": "#fbf8ff",
+                    "primary-container": "#142283",
+                    "inverse-surface": "#303036",
+                    "surface-tint": "#4955b3",
+                    "error-container": "#ffdad6",
+                    "surface": "#fbf8ff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#2f3f92",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#454652",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#14267a",
+                    "surface-variant": "#e4e1ea",
+                    "outline-variant": "#c6c5d4",
+                    "on-primary-container": "#8390f2",
+                    "surface-container-high": "#eae7ef",
+                    "on-secondary-fixed": "#260058",
+                    "on-primary-fixed-variant": "#303c9a",
+                    "primary-fixed-dim": "#bcc2ff",
+                    "inverse-on-surface": "#f2eff8",
+                    "tertiary-fixed": "#dee0ff",
+                    "surface-bright": "#fbf8ff",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#dfe0ff",
+                    "secondary": "#6f48b2",
+                    "surface-container-highest": "#e4e1ea",
+                    "surface-dim": "#dbd9e1",
+                    "secondary-fixed": "#ebdcff",
+                    "on-secondary-fixed-variant": "#572e99",
+                    "on-primary-fixed": "#000c62",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#00105b",
+                    "inverse-primary": "#bcc2ff",
+                    "primary": "#000b60",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#491d8a",
+                    "tertiary-fixed-dim": "#bac3ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope", "sans-serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["Inter", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .ambient-shadow {
+            box-shadow: 0px 12px 32px -4px rgba(27, 27, 33, 0.06);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #000b60 0%, #142283 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low font-body text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation (Shell Implementation) -->
+<header class="w-full top-0 z-50">
+<nav class="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto w-full font-['Manrope'] text-sm tracking-wide">
+<div class="text-2xl font-bold tracking-tight text-[#000b60] dark:text-white">
+                The Architectural Sanctuary
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 hover:text-[#6f48b2] transition-colors duration-300 cursor-pointer active:opacity-70" href="#">Help</a>
+<a class="text-slate-500 hover:text-[#6f48b2] transition-colors duration-300 cursor-pointer active:opacity-70" href="#">Privacy</a>
+<a class="text-slate-500 hover:text-[#6f48b2] transition-colors duration-300 cursor-pointer active:opacity-70" href="#">Terms</a>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold hover:opacity-90 transition-all">Sign In</button>
+</div>
+</nav>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center px-4 py-12">
+<div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-xl overflow-hidden ambient-shadow bg-surface-container-lowest">
+<!-- Visual Brand Side (Split Screen) -->
+<div class="hidden md:block relative overflow-hidden bg-primary-container">
+<div class="absolute inset-0 z-0 opacity-40">
+<img alt="modern architecture interior" class="w-full h-full object-cover" data-alt="minimalist architectural interior with tall concrete walls soft natural light and large glass windows overlooking a serene garden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOUURTSrc0okzeyz-NJliP_sm24cmv-Gy3e8yIb3_VKVu0wIpkhIw0JRw8SDr8ihiZs6yuVsPowAVZo7AahwyXWUlWgK2HIFcIP-mqTjHTNEWHRqB8Vi34VgRXPb3wf49C6Mh-gSu83Kgc4xrgwG7N_FCfNFC8eNBqZD61PL9QJQTH3tCkMn58izLDIiuXVyia9N9Pxx7j7BUFNhm0bcB_QBZmnJyPHCHscwnfpivLO30FlMYsaaf3jH7yxxNtdW887C4hnFB_uuU"/>
+</div>
+<!-- Decorative Blobs -->
+<div class="absolute top-1/4 -left-10 w-64 h-64 rounded-full bg-secondary-fixed-dim opacity-20 blur-3xl"></div>
+<div class="absolute bottom-1/4 -right-10 w-64 h-64 rounded-full bg-surface-tint opacity-20 blur-3xl"></div>
+<div class="relative z-10 h-full flex flex-col justify-center p-12 text-white">
+<h2 class="font-headline text-4xl font-extrabold tracking-tight leading-tight mb-6">
+                        Enter the quiet room of professional design.
+                    </h2>
+<p class="text-on-primary-container text-lg max-w-sm leading-relaxed">
+                        Experience a workspace where every pixel is intentional and security is architected into every interaction.
+                    </p>
+<div class="mt-12 flex items-center gap-4">
+<div class="flex -space-x-3">
+<img alt="user 1" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="professional portrait of a woman in a business setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAD14IJ-T6Rlbj-1omP2MTWspLj-uG6dqUh30ezliiovN-C4pvKz5qXc5sky8C2s_O3ub2mfWaLE-AS10O1liRfYCop-TG7-ROpXbV-goPqbs0tZH1175PGaEYkcChBc3IX4SgFTbhVKglPVZ2BhWsKdzfvBNW1mY77W6SAF0h_Az7j6x6-jtx_PZCallf0AFyDleGNi2eU6J45NZ81S-oGzHhEiDpV4X8i0WKV1dse0Kb4RsdsMbXK4vbbULvW3tdBOd-gnStK9E"/>
+<img alt="user 2" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="headshot of a man with spectacles in a modern creative studio environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyy6OP6TuZjjizvcerigF9cejDX5ktiag10ECxl2CjYmt6vRFmzillboMyiZCc5BrDCgnnYlYmwsp1XlRxJRixteA9Jt1aZHhdz2uqwDp1Dxmx7SI7vTs_f1PDZ2iTT845yNPxeGCUy5eQGA93qWV4wNrbSaGg2qsGX9rCx6ScJn7_C9W5RAsv5siCfvkPZXlAz105Z6LhM7ahR0wBh5CCYIyOoURDSHVSEPBabfnS9sirO5J3WFRkDBbXJjv147ARJr-GcZwmFFU"/>
+<img alt="user 3" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="smiling young professional woman against a neutral architectural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfdvzf5wsafHzA8ULK7zNayI53yyX2VqdKuuU5CWQCKftB7XcPBElYOGehzqMmZ1Ja9rioj--bUO4TkrfAwSYF0A-9AQ0S9Nu8Cfabh7OFuWInr4lFci_ru4Z8Zh8bZTK_JTzLxO2RUY4mVlckZfa7eLAmpALuCXJrIDMLm51l1xBQ3qbJK9vwpJzAwwqgH7ZC7a-IX0vDSVVVSobzWRi1fqnPBgGlvfQAxM40WMAlEiRPjB1gzSX1Gxe1_Xy05PFxkNpTwD7p840"/>
+</div>
+<span class="text-sm font-label tracking-wide text-on-primary-container">Joined by 2,000+ architects</span>
+</div>
+</div>
+</div>
+<!-- Authentication Form Side -->
+<div class="p-8 md:p-16 flex flex-col justify-center">
+<div class="mb-10 text-center md:text-left">
+<h1 class="font-headline text-3xl font-bold text-on-surface mb-2 tracking-tight">Welcome Back</h1>
+<p class="text-on-surface-variant font-body text-sm">Please enter your credentials to access your sanctuary.</p>
+</div>
+<form class="space-y-6">
+<!-- Email Input -->
+<div class="space-y-2">
+<label class="block text-xs font-label uppercase tracking-widest text-on-surface-variant ml-1" for="email">Email Address</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<input class="w-full pl-11 pr-4 py-3 bg-surface-container-highest border-none rounded-lg focus:bg-surface-container-lowest focus:ring-1 focus:ring-surface-tint transition-all placeholder-outline-variant text-on-surface text-sm" id="email" name="email" placeholder="name@architecture.com" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="block text-xs font-label uppercase tracking-widest text-on-surface-variant" for="password">Password</label>
+<a class="text-[10px] font-label uppercase tracking-widest text-secondary hover:text-primary transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input class="w-full pl-11 pr-4 py-3 bg-surface-container-highest border-none rounded-lg focus:bg-surface-container-lowest focus:ring-1 focus:ring-surface-tint transition-all placeholder-outline-variant text-on-surface text-sm" id="password" name="password" placeholder="••••••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center px-1">
+<input class="w-4 h-4 text-primary bg-surface-container-highest border-none rounded focus:ring-0 focus:ring-offset-0 cursor-pointer" id="remember" name="remember" type="checkbox"/>
+<label class="ml-2 text-xs text-on-surface-variant font-label cursor-pointer select-none" for="remember">Remember this device for 30 days</label>
+</div>
+<!-- Login Button -->
+<button class="w-full btn-gradient text-on-primary py-4 rounded-lg font-headline font-bold text-sm tracking-[0.05em] ambient-shadow hover:opacity-95 active:scale-[0.98] transition-all" type="submit">
+                        SIGN IN TO DASHBOARD
+                    </button>
+</form>
+<!-- Social Login Separator -->
+<div class="mt-10 mb-8 relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-surface-variant"></div>
+</div>
+<div class="relative flex justify-center text-xs">
+<span class="px-4 bg-surface-container-lowest text-outline-variant uppercase tracking-widest font-label">Or continue with</span>
+</div>
+</div>
+<!-- Social Icons -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-low hover:bg-surface-container transition-colors rounded-lg text-xs font-semibold text-on-surface-variant">
+<img alt="Google" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3yol5cl97vZ3bSYYVmFrOn-a5Zv0_-OojNk0AFB4Nr4xszIF0d32ihFLzzV4oMTQKAs3SadZzukL7UGam8EAs9OQHjJItZ0SToxcNcxFcDtMWrJlYnO7iUOp-GSfnX-llYbB_VOTC_dR8y-6fAT-upMqAFqIsjRRQ1rYrKMA1SsYz4XQ8aO0RE4kyUKKltAuIeRx7gtk-r32vHzfw20nElhuOBx7bbgnToyMwxYsmpWQmc-WWpeXrDGrQutRGvZayAzzZgl0M-p8"/>
+                        Google
+                    </button>
+<button class="flex items-center justify-center gap-3 py-3 px-4 bg-surface-container-low hover:bg-surface-container transition-colors rounded-lg text-xs font-semibold text-on-surface-variant">
+<img alt="LinkedIn" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAabOZ8nBrnECpvLLK6_SARvLIEBt23EDRbZ6qzhiYm3wgI9QLrARHfqhGjmxOEW-N8EU7_rUQne28yb7lMC3xHaD0IYmPd4xp1yN-c9x0ZA19KNAGBbYVQLxPUsLoxEkM96FAMxBHk11czVGmyYyQtuBnhhX7DInPdpAQeLRFsGTMgEyuWyTDqRDmcIOvH2xgx9BMfkQhs7a9nvHgJHrAQTD8PbqvU8HrTvLZG2btzYUZhmbAA9m27AmlGGhVpv6ETLg8_g6JYB6o"/>
+                        LinkedIn
+                    </button>
+</div>
+<!-- Sign Up Link -->
+<div class="mt-12 text-center">
+<p class="text-sm text-on-surface-variant font-body">
+                        New to the sanctuary? 
+                        <a class="text-primary font-bold ml-1 hover:underline underline-offset-4" href="#">Create an account</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full bottom-0 bg-[#fbf8ff] dark:bg-slate-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 w-full max-w-7xl mx-auto font-['Inter'] text-xs uppercase tracking-widest">
+<div class="text-sm font-semibold text-[#000b60] dark:text-white mb-4 md:mb-0">
+                Architectural Sanctuary
+            </div>
+<div class="flex gap-8 text-slate-400 dark:text-slate-500">
+<a class="underline-offset-4 hover:underline hover:text-[#6f48b2] transition-colors" href="#">Support</a>
+<a class="underline-offset-4 hover:underline hover:text-[#6f48b2] transition-colors" href="#">Security</a>
+<a class="underline-offset-4 hover:underline hover:text-[#6f48b2] transition-colors" href="#">Contact</a>
+</div>
+<div class="mt-4 md:mt-0 text-slate-400 dark:text-slate-500 text-[10px]">
+                © 2024 Architectural Sanctuary. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>
