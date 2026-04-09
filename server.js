@@ -17,15 +17,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static HTML/CSS/JS files from the root folder
-app.use(express.static(path.join(__dirname)));
+// FIX: Serve static files from a dedicated 'public' folder to prevent exposing .env and server code.
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ── MySQL Connection Pool ────────────────────────────────────
 let db;
 
 async function connectDB() {
   try {
-    db = await mysql.createPool({
+    const dbConfig = {
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'root',
@@ -34,11 +34,14 @@ async function connectDB() {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      // Aiven requires SSL for all connections
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
+    };
+
+    // FIX: Only apply SSL if explicitly requested via environment variables
+    if (process.env.DB_SSL === 'true') {
+      dbConfig.ssl = { rejectUnauthorized: false };
+    }
+
+    db = await mysql.createPool(dbConfig);
 
     // Verify the connection works
     await db.query('SELECT 1');
@@ -185,11 +188,12 @@ app.post('/api/login', async (req, res) => {
       [cleanEmail]
     );
 
+    const genericErrorMsg = 'Invalid email or password.';
+
     if (rows.length === 0) {
-      // Generic message — don't reveal whether email exists
       return res.status(401).json({
         success: false,
-        errors: { email: 'Invalid email or password.' },
+        message: genericErrorMsg
       });
     }
 
@@ -200,7 +204,7 @@ app.post('/api/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        errors: { password: 'Invalid email or password.' },
+        message: genericErrorMsg
       });
     }
 
@@ -223,62 +227,10 @@ app.post('/api/login', async (req, res) => {
 });
 
 // ── GET /api/me ───────────────────────────────────────────────
-// Protected route — returns current user's info
 app.get('/api/me', authRequired, async (req, res) => {
   try {
     const [rows] = await db.query(
       'SELECT id, full_name, email, created_at FROM users WHERE id = ?',
       [req.user.id]
     );
-    if (rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'User not found.' });
-    }
-    return res.json({ success: true, user: rows[0] });
-  } catch (err) {
-    console.error('Me error:', err);
-    return res.status(500).json({ success: false, message: 'Server error.' });
-  }
-});
-
-// ── GET /api/users ─────────────────────────────────────────────
-// Admin view — list all registered users (for dev/testing)
-app.get('/api/users', authRequired, async (req, res) => {
-  try {
-    const [rows] = await db.query(
-      'SELECT id, full_name, email, created_at FROM users ORDER BY created_at DESC'
-    );
-    return res.json({ success: true, count: rows.length, users: rows });
-  } catch (err) {
-    console.error('Users list error:', err);
-    return res.status(500).json({ success: false, message: 'Server error.' });
-  }
-});
-
-// ── Catch-all: serve index.html for client-side routing ──────
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// ── Start ─────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log('');
-    console.log('🏛️  The Architectural Sanctuary');
-    console.log(`🚀  Server running at http://localhost:${PORT}`);
-    console.log('');
-    console.log('   Pages:');
-    console.log(`   • Login    → http://localhost:${PORT}/login.html`);
-    console.log(`   • Sign Up  → http://localhost:${PORT}/signup.html`);
-    console.log(`   • Dashboard→ http://localhost:${PORT}/dashboard.html`);
-    console.log('');
-    console.log('   API Endpoints:');
-    console.log(`   • POST /api/signup`);
-    console.log(`   • POST /api/login`);
-    console.log(`   • GET  /api/me  (requires Bearer token)`);
-    console.log(`   • GET  /api/users (requires Bearer token)`);
-    console.log(`   • GET  /api/health`);
-    console.log('');
-  });
-});
+    if (rows.length === 0
