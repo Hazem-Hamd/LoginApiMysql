@@ -1,14 +1,14 @@
 // ============================================================
 //  The Architectural Sanctuary — Express + MySQL Backend
 // ============================================================
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const express  = require('express');
-const mysql    = require('mysql2/promise');
-const bcrypt   = require('bcryptjs');
-const jwt      = require('jsonwebtoken');
-const cors     = require('cors');
-const path     = require('path');
+const express = require('express');
+const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
 const app = express();
 
@@ -26,14 +26,14 @@ let db;
 async function connectDB() {
   try {
     db = await mysql.createPool({
-      host:               process.env.DB_HOST     || 'localhost',
-      port:               process.env.DB_PORT     || 3306,
-      user:               process.env.DB_USER     || 'root',
-      password:           process.env.DB_PASSWORD || '',
-      database:           process.env.DB_NAME     || 'sanctuary_db',
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 3306,
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || 'sanctuary_db',
       waitForConnections: true,
-      connectionLimit:    10,
-      queueLimit:         0,
+      connectionLimit: 10,
+      queueLimit: 0,
       // Aiven requires SSL for all connections
       ssl: {
         rejectUnauthorized: false,
@@ -64,7 +64,7 @@ async function connectDB() {
 }
 
 // ── JWT Helper ───────────────────────────────────────────────
-const JWT_SECRET  = process.env.JWT_SECRET     || 'sanctuary_dev_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'sanctuary_dev_secret';
 const JWT_EXPIRES = process.env.JWT_EXPIRES_IN || '7d';
 
 function signToken(payload) {
@@ -120,7 +120,7 @@ app.post('/api/signup', async (req, res) => {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName  = full_name.trim();
+    const cleanName = full_name.trim();
 
     // ── Check for duplicate email ──
     const [existing] = await db.query(
@@ -142,7 +142,7 @@ app.post('/api/signup', async (req, res) => {
     );
 
     const userId = result.insertId;
-    const token  = signToken({ id: userId, email: cleanEmail, full_name: cleanName });
+    const token = signToken({ id: userId, email: cleanEmail, full_name: cleanName });
 
     console.log(`👤  New user signed up: ${cleanEmail} (id=${userId})`);
 
